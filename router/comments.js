@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Posts = require("../schemas/post.js");
 const Comments = require("../schemas/comment.js");
 const additional = require("../other/additional.js");
 

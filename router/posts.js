@@ -2,12 +2,22 @@ const express = require("express");
 const router = express.Router();
 const Posts = require("../schemas/post.js");
 const additional = require("../other/additional.js");
+const Comments = require("../schemas/comment.js");
 
 // all posts GET
 router.get("/posts", async (req, res) => {
   const posts = await Posts.find({});
   posts.reverse();
   res.status(200).json({ posts: posts });
+});
+
+// posts GET
+router.get("/posts/:postId", async (req, res) => {
+  const { postId } = req.params;
+  const posts = await Posts.find({ postId: postId });
+  const comments = await Comments.find({ postId: postId });
+  comments.reverse();
+  res.status(200).json({ posts: posts, comments: comments });
 });
 
 // posts POST
