@@ -1,0 +1,23 @@
+{
+  "name": "node_blog",
+  "version": "1.0.0",
+  "description": "node blog api",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyun20230508/node_blog_api.git"
+  },
+  "author": "Nam Hyun Jin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hyun20230508/node_blog_api/issues"
+  },
+  "homepage": "https://github.com/hyun20230508/node_blog_api#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.2.4"
+  }
+}
