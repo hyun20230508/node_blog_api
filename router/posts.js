@@ -12,7 +12,6 @@ router.get("/posts", async (req, res) => {
       postId: e.postId,
       user: e.user,
       title: e.title,
-      content: e.content,
       createdAt: e.createdAt,
     };
   });
