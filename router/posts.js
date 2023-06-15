@@ -7,17 +7,44 @@ const Comments = require("../schemas/comment.js");
 // all posts GET
 router.get("/posts", async (req, res) => {
   const posts = await Posts.find({});
-  posts.reverse();
-  res.status(200).json({ posts: posts });
+  const priPosts = posts.map((e) => {
+    return {
+      postId: e.postId,
+      user: e.user,
+      title: e.title,
+      content: e.content,
+      createdAt: e.createdAt,
+    };
+  });
+  priPosts.reverse();
+  res.status(200).json({ posts: priPosts });
 });
 
 // posts GET
 router.get("/posts/:postId", async (req, res) => {
   const { postId } = req.params;
   const posts = await Posts.find({ postId: postId });
+  const priPosts = posts.map((e) => {
+    return {
+      postId: e.postId,
+      user: e.user,
+      title: e.title,
+      content: e.content,
+      createdAt: e.createdAt,
+    };
+  });
   const comments = await Comments.find({ postId: postId });
-  comments.reverse();
-  res.status(200).json({ posts: posts, comments: comments });
+  const priComments = comments.map((e) => {
+    return {
+      postId: e.postId,
+      commentId: e.commentId,
+      user: e.user,
+      content: e.content,
+      createdAt: e.createdAt,
+    };
+  });
+  priComments.reverse();
+  res.status(200).json({ posts: priPosts, comments: priComments });
 });
 
 // posts POST
@@ -96,14 +123,22 @@ router.delete("/posts/:postId", async (req, res) => {
   }
 
   const existsPostDelete = await Posts.find({ postId });
-  if (existsPostDelete.length > 0) {
-    if (existsPostDelete[0].password !== password) {
-      return res.status(400).json({
-        success: false,
-        errorMessage: "패스워드가 일치하지 않습니다.",
-      });
+  const existsCommentsDelete = await Comments.find({ postId });
+
+  // 게시글 삭제 시, 하위 댓글들을 모두 삭제
+  if (existsCommentsDelete.length > 0) {
+    if (existsPostDelete.length > 0) {
+      if (existsPostDelete[0].password !== password) {
+        return res.status(400).json({
+          success: false,
+          errorMessage: "패스워드가 일치하지 않습니다.",
+        });
+      }
+      await Posts.deleteOne({ postId: postId });
+      await Comments.deleteMany({ postId: postId });
+    } else {
+      return res.status(400).json({ message: "잘못된 접근입니다." });
     }
-    await Posts.deleteOne({ postId: postId });
   } else {
     return res.status(400).json({ message: "잘못된 접근입니다." });
   }
