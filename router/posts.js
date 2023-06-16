@@ -125,22 +125,45 @@ router.delete("/posts/:postId", async (req, res) => {
   const existsCommentsDelete = await Comments.find({ postId });
 
   // 게시글 삭제 시, 하위 댓글들을 모두 삭제
-  if (existsCommentsDelete.length > 0) {
-    if (existsPostDelete.length > 0) {
-      if (existsPostDelete[0].password !== password) {
-        return res.status(400).json({
-          success: false,
-          errorMessage: "패스워드가 일치하지 않습니다.",
-        });
-      }
-      await Posts.deleteOne({ postId: postId });
-      await Comments.deleteMany({ postId: postId });
-    } else {
-      return res.status(400).json({ message: "잘못된 접근입니다." });
+  if (existsPostDelete.length > 0) {
+    if (existsPostDelete[0].password !== password) {
+      return res.status(400).json({
+        success: false,
+        errorMessage: "패스워드가 일치하지 않습니다.",
+      });
     }
+    await Posts.deleteOne({ postId: postId });
   } else {
     return res.status(400).json({ message: "잘못된 접근입니다." });
   }
+
+  if (existsCommentsDelete.length > 0) {
+    await Comments.deleteMany({ postId: postId });
+  }
+  //-----------------------------------------------------
+  // if (existsCommentsDelete.length > 0) {
+  //   if (existsPostDelete.length > 0) {
+  //     if (existsPostDelete[0].password !== password) {
+  //       return res.status(400).json({
+  //         success: false,
+  //         errorMessage: "패스워드가 일치하지 않습니다.",
+  //       });
+  //     }
+  //     await Posts.deleteOne({ postId: postId });
+  //     await Comments.deleteMany({ postId: postId });
+  //   } else {
+  //     return res.status(400).json({ message: "잘못된 접근입니다." });
+  //   }
+  // } else {
+  //   if (existsPostDelete[0].password !== password) {
+  //     return res.status(400).json({
+  //       success: false,
+  //       errorMessage: "패스워드가 일치하지 않습니다.",
+  //     });
+  //   }
+  //   await Posts.deleteOne({ postId: postId });
+  //   await Comments.deleteMany({ postId: postId });
+  // }
   res.json({ message: "게시글을 삭제하였습니다." });
 });
 
